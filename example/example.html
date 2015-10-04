@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>GWcode SyntaxHighlighter Example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script type="text/javascript" src="sh2/scripts/shCore.js"></script>
+	<script type="text/javascript" src="sh2/scripts/shBrushEE.js"></script>
+
+	<link type="text/css" rel="stylesheet" href="sh2/styles/shCore.css" />
+	<link type="text/css" rel="stylesheet" href="sh2/styles/shThemeDefault.css" />
+	<link type="text/css" rel="stylesheet" href="sh2/styles/shEE.css" />
+
+<script type="text/javascript">
+SyntaxHighlighter.config.strings.alert = '';
+SyntaxHighlighter.defaults['auto-links'] = false;
+SyntaxHighlighter.config.clipboardSwf = 'sh2/scripts/clipboard.swf';
+SyntaxHighlighter.all();
+</script>
+
+<style type="text/css">
+	body {
+		font: 13px/14px verdana, arial;
+		width: 800px;
+	}
+	h1 {
+		font: bold 18px/24px verdana, arial;
+		margin-bottom: 25px;
+	}
+</style>
+
+</head>
+<body>
+	<h1>GWcode SyntaxHighlighter with SyntaxHighlighter v2.1.382</h1>
+	<p>First, make sure you include these javascript files:</p>
+<pre class="brush:ee;">
+&lt;script type=&quot;text/javascript&quot; src=&quot;sh2/scripts/shCore.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;sh2/scripts/shBrushEE.js&quot;&gt;&lt;/script&gt;
+</pre>
+	<p>Second, include the CSS files (you can combine them as 1 css file if you&#39;d like).<br />The 3rd css file adds the colors for EE code:</p>
+<pre class="brush:ee;">
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;sh2/styles/shCore.css&quot; /&gt;
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;sh2/styles/shThemeDefault.css&quot; /&gt;
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;sh2/styles/shEE.css&quot; /&gt;
+</pre>
+	<p>Then, include some javascript to start highlighting code:</p>
+<pre class="brush:ee;">
+&lt;script type=&quot;text/javascript&quot;&gt;
+SyntaxHighlighter.config.strings.alert = &#39;&#39;;
+SyntaxHighlighter.defaults[&#39;auto-links&#39;] = false;
+SyntaxHighlighter.config.clipboardSwf = &#39;sh2/scripts/clipboard.swf&#39;;
+SyntaxHighlighter.all();
+&lt;/script&gt;
+</pre>
+	<p>And this will be the output:</p>
+<pre class="brush:ee;">
+&#123;exp:channel:entries channel=&quot;news&quot; limit=&quot;1&quot;&#125;
+	&lt;h1&gt;&#123;title&#125;&lt;/h1&gt;
+	&lt;p&gt;Some HTML code&lt;/p&gt;
+
+	&#123;exp:pluginname param=&quot;value&quot;&#125;&#123;variable-wrapped-in-plugin&#125;&#123;/exp:pluginname&#125;
+	&lt;div id=&quot;divid&quot;&gt;Some more HTML code&lt;/div&gt;
+	&#123;variable_pair&#125;something in between&#123;/variable_pair&#125;
+&#123;/exp:channel:entries&#125;
+</pre>
+</body>
+</html>
