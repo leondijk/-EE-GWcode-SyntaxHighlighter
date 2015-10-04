@@ -1,7 +1,7 @@
 # GWcode SyntaxHighlighter
 ## Free plugin for ExpressionEngine 2.0+
 #### By Leon Dijk - [@GWcode](http://twitter.com/gwcode)
-v1.0.0
+
 ### Description
 
 Highlight code with SyntaxHighlighter from within Wygwam.

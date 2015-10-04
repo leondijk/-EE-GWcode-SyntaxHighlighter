@@ -1,77 +1,72 @@
-<?php if ( ! defined('APP_VER')) exit('No direct script access allowed');
+<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
- GWcode SyntaxHighlighter
- http://gwcode.com/add-ons/gwcode-syntaxhighlighter
 ============================================================
- Author: Leon Dijk (Twitter: @GWcode)
- Copyright (c) 2011 Gryphon WebSolutions, Leon Dijk
- http://gwcode.com
+ This ExpressionEngine add-on was created by Leon Dijk
+ - http://gwcode.com/
 ============================================================
- This ExpressionEngine 2.x add-on is licensed under a
+ This add-on is licensed under a
  Creative Commons Attribution-NoDerivs 3.0 Unported License.
- http://creativecommons.org/licenses/by-nd/3.0/
-============================================================
- As always, please make a full backup first before using
- this or any other add-on.
+ - http://creativecommons.org/licenses/by-nd/3.0/
 ============================================================
 */
 
 class Gwcode_syntaxhighlighter_ext {
 
 	var $name           = 'GWcode SyntaxHighlighter';
-	var $version        = '1.0.0';
+	var $version        = '1.1.0';
 	var $description    = 'Adds a SyntaxHighlighter button to your Wygwam toolbar.';
 	var $settings_exist = 'n';
 	var $docs_url       = 'http://gwcode.com/add-ons/gwcode-syntaxhighlighter';
 
-	/**
-	 * Class Constructor
-	 */
-	function Gwcode_syntaxhighlighter_ext()
-	{
-		// Make a local reference to the ExpressionEngine super object
-		$this->EE =& get_instance();
-	}
+	private $_hooks = array(
+		'wygwam_config',
+		'wygwam_tb_groups'
+	);
+
+	private static $_included_resources = FALSE;
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Activate Extension
 	 */
-	function activate_extension()
-	{
-		// add the row to exp_extensions
-		$this->EE->db->insert('extensions', array(
-			'class'    => 'Gwcode_syntaxhighlighter_ext',
-			'hook'     => 'wygwam_config',
-			'method'   => 'wygwam_config',
-			'priority' => 10,
-			'version'  => $this->version,
-			'enabled'  => 'y'
-		));
+	function activate_extension() {
+
+		foreach ($this->_hooks as $hook) {
+			ee()->db->insert('extensions', array(
+				'class'    => get_class($this),
+				'method'   => $hook,
+				'hook'     => $hook,
+				'settings' => '',
+				'priority' => 10,
+				'version'  => $this->version,
+				'enabled'  => 'y'
+			));
+		}
+
 	}
 
 	/**
 	 * Update Extension
 	 */
-	function update_extension($current = '')
-	{
+	function update_extension($current = '') {
+
 		if($current == '' OR $current == $this->version) {
 			return FALSE;
 		}
 
-		$this->EE->db->where('class', __CLASS__);
-		$this->EE->db->update('extensions', array('version' => $this->version));
+		ee()->db->where('class', __CLASS__);
+		ee()->db->update('extensions', array('version' => $this->version));
+
 	}
 
 	/**
 	 * Disable Extension
 	 */
-	function disable_extension()
-	{
-		$this->EE->db->where('class', __CLASS__);
-		$this->EE->db->delete('extensions');
+	function disable_extension() {
+		ee()->db->where('class', __CLASS__);
+		ee()->db->delete('extensions');
 	}
 
 	// --------------------------------------------------------------------
@@ -79,20 +74,69 @@ class Gwcode_syntaxhighlighter_ext {
 	/**
 	 * wygwam_config hook
 	 */
-	function wygwam_config($config, $settings)
-	{
-		// If another extension shares the same hook,
-		// we need to get the latest and greatest config
-		if ($this->EE->extensions->last_call !== FALSE)
-		{
-			$config = $this->EE->extensions->last_call;
+	function wygwam_config($config, $settings) {
+
+		if(($last_call = ee()->extensions->last_call) !== FALSE) {
+			$config = $last_call;
 		}
 
-		if(isset($config['toolbar'])) {
-			array_splice($config['toolbar'],3,0,array(array('Code')));
+		// Check if our toolbar button has been added
+		$include_btn = FALSE;
+
+		foreach($config['toolbar'] as $tbgroup) {
+			if(in_array('syntaxhighlight', $tbgroup)) {
+				$include_btn = TRUE;
+				break;
+			}
 		}
 
-		// Return the (unmodified) config
+		if($include_btn) {
+			// Add our plugin to CKEditor
+			if(!empty($config['extraPlugins'])) {
+				$config['extraPlugins'] .= ',';
+			}
+
+			$config['extraPlugins'] .= 'syntaxhighlight';
+
+			$this->_include_resources();
+		}
+
 		return $config;
+
 	}
+
+	public function wygwam_tb_groups($tb_groups) {
+
+		if(($last_call = ee()->extensions->last_call) !== FALSE) {
+			$tb_groups = $last_call;
+        }
+
+		$tb_groups[] = array('syntaxhighlight');
+
+		// Is this the toolbar editor?
+		if(ee()->input->get('M') == 'show_module_cp') {
+			// Give our toolbar button an icon
+			$icon_url = URL_THIRD_THEMES.'gwcode_syntaxhighlighter/syntaxhighlight/icons/syntaxhighlight.png';
+			ee()->cp->add_to_head('<style type="text/css">.cke_button__syntaxhighlight_icon { background-image: url('.$icon_url.'); }</style>');
+		}
+
+		return $tb_groups;
+
+    }
+
+	private function _include_resources() {
+
+		// Is this the first time we've been called?
+		if(!self::$_included_resources) {
+			// Tell CKEditor where to find our plugin
+			$plugin_url = URL_THIRD_THEMES.'gwcode_syntaxhighlighter/syntaxhighlight/';
+			ee()->cp->add_to_foot('<script type="text/javascript">CKEDITOR.plugins.addExternal("syntaxhighlight", "'.$plugin_url.'");</script>');
+
+			// Don't do that again
+			self::$_included_resources = TRUE;
+		}
+
+	}
+
 }
+?>
